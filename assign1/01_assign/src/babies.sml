@@ -121,7 +121,7 @@ fun for2019(data: string list) =
 
 (*
    Find first non-zero value in string list and the index of it
-   string list -> int * int
+   string list * int -> int * int
 *)
 fun findFirstNonZero (data: string list, index: int) =
   if null(data)
