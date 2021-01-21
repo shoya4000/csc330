@@ -9,6 +9,24 @@ local
 in
 
 (* 
+   split line into name, values, and total
+   string list -> string * string list * string
+*)
+fun splitLine(lineList: string list) = 
+  let fun splitEnd(lineList: string list, total: string) =
+    if null(tl(tl(lineList)))
+    then ([hd(lineList)], hd(tl(lineList)))
+    else 
+      let val splits = splitEnd(tl(lineList),total)
+      in (hd(lineList):: #1 splits, #2 splits)
+      end
+  in 
+    let val split = splitEnd(tl(lineList), "")
+    in (hd(lineList), #1 split, #2 split)
+    end
+  end 
+
+(* 
    Process the file into list of babies
    takes in the file string
    return list of names, with data associated with each
@@ -25,8 +43,8 @@ fun processBabies (babyFile: string) =
         let val lineList = split_at(hd(babyList), #",")
         in
           if null(tl(babyList))
-          then [(hd(lineList),  tl(lineList))]
-          else (hd(lineList),  tl(lineList)) :: convertToTuples(tl(babyList))
+          then [splitLine(lineList)]
+          else splitLine(lineList) :: convertToTuples(tl(babyList))
         end
       in
         convertToTuples(babyList)
@@ -35,15 +53,15 @@ fun processBabies (babyFile: string) =
 
 (*
    checks if baby name is in list
-   string * (string * string list) list -> string option
+   string * (string * string list * string) list -> (string list * string) option
 *)
-fun isIn(name: string, list: (string * string list) list) =
+fun isIn(name: string, list: (string * string list * string) list) =
   if null list
   then NONE
   else
     if #1 (hd(list)) = name
     then
-      SOME (#2 (hd(list)))
+      SOME (#2(hd(list)), #3(hd(list)))
     else
       isIn(name, tl(list))
 
@@ -55,27 +73,18 @@ fun getVal(string: string) =
   valOf(fromString(string))
 
 (*
-   Uses the total at the end of the line to confirm calculated total
-   string list -> int
-*)
-fun totalConfirm(data: string list) =
-  if null(tl(data))
-  then getVal(hd(data))
-  else totalConfirm(tl(data))
-
-(*
    Calculates total
-   string list -> string
+   string list * string -> string
 *)
-fun total(data: string list) =
+fun total(data: string list * string) =
   let fun calcTotal(data: string list) = 
-    if null(tl(data)) (*Last entry is total for consistency check*)
+    if null(data)
     then 0
     else getVal(hd(data)) + calcTotal(tl(data))
   in
-    let val calcedTotal = calcTotal(data)
+    let val calcedTotal = calcTotal(#1 data)
     in
-      if calcedTotal = totalConfirm(data)
+      if calcedTotal = getVal(#2 data)
       then " Total: " ^ int_to_string(calcedTotal) ^ "\n"
       else " Error in data - total inconsistent"
     end
@@ -87,7 +96,7 @@ fun total(data: string list) =
 *)
 fun years(data: string list) =
   let fun inYears(data: string list) = 
-    if null(tl(data)) (*Last entry is total for consistency check*)
+    if null(data)
     then 0
     else 
       if getVal(hd(data)) = 0
@@ -103,7 +112,7 @@ fun years(data: string list) =
 *)
 fun for2019(data: string list) =
   let fun get2019(data: string list) =
-    if null(tl(tl(data)))
+    if null(tl(data))
     then hd(data)
     else get2019(tl(data))
   in
@@ -111,11 +120,11 @@ fun for2019(data: string list) =
   end
 
 (*
-   Find first non-zero value in string list
-   string list -> int
+   Find first non-zero value in string list and the index of it
+   string list -> int * int
 *)
 fun findFirstNonZero (data: string list, index: int) =
-  if null(tl(data)) (*Last entry is total for consistency check*)
+  if null(data)
     then (getVal(hd(data)), index)
     else 
       if getVal(hd(data)) <> 0
@@ -137,7 +146,7 @@ fun first(data: string list, yearSt: string) =
    string list * string -> string
 *)
 fun last(data: string list, yearSt: string) =
-  let val reversedData = tl(rev(data)) (*Last entry is total for consistency check*) 
+  let val reversedData = rev(data)
   in
     let val value = findFirstNonZero(reversedData, 0)
     in
@@ -147,12 +156,12 @@ fun last(data: string list, yearSt: string) =
 
 (*
    Find minimum non-zero year
-   string list * string -> string
+   string list * string * string -> string
 *)
-fun min(data: string list, yearSt: string) =
+fun min(data: string list, total: string, yearSt: string) =
   let fun findMin(data: string list, index: int) = 
-    if null(tl(data)) (*Last entry is total for consistency check*)
-    then (totalConfirm(data), index)
+    if null(data)
+    then (getVal(total), index)
     else 
       let
         val result = findMin(tl(data), index + 1)
@@ -176,7 +185,7 @@ fun min(data: string list, yearSt: string) =
 *)
 fun max(data: string list, yearSt: string) =
   let fun findMax(data: string list, index: int) = 
-    if null(tl(data)) (*Last entry is total for consistency check*)
+    if null(data)
     then (0, index)
     else 
       let
@@ -198,14 +207,14 @@ fun max(data: string list, yearSt: string) =
    Find avg for name use over 100 years of data
    string list -> string
 *)
-fun avg(data: string list) =
-  " Avg: " ^ real_to_string(int_to_real(totalConfirm(data))/int_to_real(100)) ^ "\n"
+fun avg(total: string) =
+  " Avg: " ^ real_to_string(int_to_real(getVal(total))/int_to_real(100)) ^ "\n"
 
 (*
    Get the appropriate data output from the data and processed list
-   string * (string * string list) list * string -> string
+   string * (string * string list * string) list * string -> string
 *)
-fun getDataForNames(input: string, processed: (string * string list) list, yearSt: string) =
+fun getDataForNames(input: string, processed: (string * string list * string) list, yearSt: string) =
   let
     val nameList = split_at(input, #"\n")
   in
@@ -220,7 +229,7 @@ fun getDataForNames(input: string, processed: (string * string list) list, yearS
             val nameData = isIn(name, processed)
           in
             if isSome(nameData)
-            then name ^ "\n" ^ total(valOf(nameData)) ^ years(valOf(nameData)) ^ for2019(valOf(nameData)) ^ first(valOf(nameData), yearSt) ^ last(valOf(nameData), yearSt) ^ min(valOf(nameData), yearSt) ^ max(valOf(nameData), yearSt) ^ avg(valOf(nameData)) ^ search(tl(nameList))
+            then name ^ "\n" ^ total(valOf(nameData)) ^ years(#1(valOf(nameData))) ^ for2019(#1(valOf(nameData))) ^ first(#1(valOf(nameData)), yearSt) ^ last(#1(valOf(nameData)), yearSt) ^ min(#1(valOf(nameData)), #2(valOf(nameData)), yearSt) ^ max(#1(valOf(nameData)), yearSt) ^ avg(#2(valOf(nameData))) ^ search(tl(nameList))
             else name ^ "\nBaby name [" ^ name ^ "] was not found\n" ^ search(tl(nameList))
           end
     in
@@ -233,7 +242,7 @@ fun babies_program (fileName, yearSt) =
       val file = read_file(fileName)
       val processed = processBabies(file)
       val _ = print("Read " ^ int_to_string(length(processed)) ^ " babies" ^ dot ^ " Starting year "^ yearSt ^"" ^ dot ^ " Each baby has 100 entries" ^ dot ^ "\n")
-      
+
       val names = read_stdin()
       val output = getDataForNames(names, processed, yearSt)
       val _ = print(output)
