@@ -52,8 +52,7 @@ fun listLength (list: 'A list) =
 *)
 fun isIn(name: string, list: (string * string list) list) =
   if null list
-  then
-    NONE
+  then NONE
   else
     if #1 (hd(list)) = name
     then
@@ -62,12 +61,19 @@ fun isIn(name: string, list: (string * string list) list) =
       isIn(name, tl(list))
 
 (*
+   uses fromString to convert string to int option, and then gets int from that 
+   string list -> int
+*)
+fun getVal(string: string) =
+  valOf(fromString(string))
+
+(*
    Uses the total at the end of the line to confirm calculated total
    string list -> int
 *)
 fun totalConfirm(data: string list) =
   if null(tl(data))
-  then valOf(fromString(hd(data)))
+  then getVal(hd(data))
   else totalConfirm(tl(data))
 
 (*
@@ -78,7 +84,7 @@ fun total(data: string list) =
   let fun calcTotal(data: string list) = 
     if null(tl(data)) (*Last entry is total for consistency check*)
     then 0
-    else valOf(fromString(hd(data))) + calcTotal(tl(data))
+    else getVal(hd(data)) + calcTotal(tl(data))
   in
     let val calcedTotal = calcTotal(data)
     in
@@ -97,7 +103,7 @@ fun years(data: string list) =
     if null(tl(data)) (*Last entry is total for consistency check*)
     then 0
     else 
-      if valOf(fromString(hd(data))) = 0
+      if getVal(hd(data)) = 0
       then inYears(tl(data))
       else 1 + inYears(tl(data))
   in
@@ -123,10 +129,10 @@ fun for2019(data: string list) =
 *)
 fun findFirstNonZero (data: string list) =
   if null(tl(data)) (*Last entry is total for consistency check*)
-    then valOf(fromString(hd(data)))
+    then getVal(hd(data))
     else 
-      if valOf(fromString(hd(data))) <> 0
-      then valOf(fromString(hd(data)))
+      if getVal(hd(data)) <> 0
+      then getVal(hd(data))
       else findFirstNonZero(tl(data))
 
 (*
@@ -134,7 +140,7 @@ fun findFirstNonZero (data: string list) =
    string list * int -> int
 *)
 fun findFirstIndexOfValue (data: string list, value: int) =
-  if valOf(fromString(hd(data))) = value
+  if getVal(hd(data)) = value
   then 0
   else 1 + findFirstIndexOfValue(tl(data), value)
 
@@ -146,7 +152,7 @@ fun first(data: string list, yearSt: string) =
   let val value = findFirstNonZero(data)
   in
     let val index = findFirstIndexOfValue(data,value)
-    in " First: " ^ int_to_string(valOf(fromString(yearSt)) + index) ^ " "^ int_to_string(value) ^ "\n"
+    in " First: " ^ int_to_string(getVal(yearSt) + index) ^ " "^ int_to_string(value) ^ "\n"
     end
   end
 
@@ -160,7 +166,7 @@ fun last(data: string list, yearSt: string) =
     let val value = findFirstNonZero(reversedData)
     in
       let val index = findFirstIndexOfValue(reversedData,value)
-      in " Last: " ^ int_to_string(valOf(fromString(yearSt)) + 99 - index) ^ " "^ int_to_string(value) ^ "\n"
+      in " Last: " ^ int_to_string(getVal(yearSt) + 99 - index) ^ " "^ int_to_string(value) ^ "\n"
       end
     end
   end
@@ -177,13 +183,16 @@ fun min(data: string list, yearSt: string) =
       let
         val result = calcMin(tl(data))
       in
-        if valOf(fromString(hd(data))) < result andalso valOf(fromString(hd(data))) <> 0
-        then valOf(fromString(hd(data)))
+        if getVal(hd(data)) < result andalso getVal(hd(data)) <> 0
+        then getVal(hd(data))
         else result
       end
   in
-    let val index = findFirstIndexOfValue(data,calcMin(data))
-    in " Min: " ^ int_to_string(valOf(fromString(yearSt)) + index) ^ " " ^ int_to_string(calcMin(data)) ^ "\n"
+    let val value = calcMin(data)
+    in
+      let val index = findFirstIndexOfValue(data,value)
+      in " Min: " ^ int_to_string(getVal(yearSt) + index) ^ " " ^ int_to_string(value) ^ "\n"
+      end
     end
   end
 
@@ -199,15 +208,17 @@ fun max(data: string list, yearSt: string) =
       let
         val result = calcMax(tl(data))
       in
-        if valOf(fromString(hd(data))) > result
-        then valOf(fromString(hd(data)))
+        if getVal(hd(data)) > result
+        then getVal(hd(data))
         else result
       end
   in
-    let val reversedData = tl(rev(data)) (*Last entry is total for consistency check*) 
+    let
+      val reversedData = tl(rev(data)) (*Last entry is total for consistency check*)
+      val value = calcMax(data)
     in
-      let val index = findFirstIndexOfValue(reversedData,calcMax(data))
-      in " Max: " ^ int_to_string(valOf(fromString(yearSt)) + 99 - index) ^ " " ^ int_to_string(calcMax(data)) ^ "\n"
+      let val index = findFirstIndexOfValue(reversedData,value)
+      in " Max: " ^ int_to_string(getVal(yearSt) + 99 - index) ^ " " ^ int_to_string(value) ^ "\n"
       end
     end
   end
