@@ -148,9 +148,9 @@ fun first(data: string list, yearSt: string) =
 fun last(data: string list, yearSt: string) =
   let val reversedData = rev(data)
   in
-    let val value = findFirstNonZero(reversedData, 0)
+    let val value = findFirstNonZero(reversedData, 1)
     in
-      " Last: " ^ int_to_string(getVal(yearSt) + 99 - #2 value) ^ " "^ int_to_string(#1 value) ^ "\n"
+      " Last: " ^ int_to_string(getVal(yearSt) + length(data) - #2 value) ^ " "^ int_to_string(#1 value) ^ "\n"
     end
   end
 
