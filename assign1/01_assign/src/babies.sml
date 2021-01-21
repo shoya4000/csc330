@@ -18,20 +18,16 @@ in
 fun processBabies (babyFile: string) =
   let val babyList = split_at(babyFile, #"\n")
   in
-    if null babyList
+    if null(babyList)
     then []
     else
-      let
-        fun convertToTuples (babyList: string list) =
-          let
-            val lineList = split_at(hd(babyList), #",")
-          in
-            if null (tl(babyList))
-            then
-              [(hd(lineList),  tl(lineList))]
-            else
-              (hd(lineList),  tl(lineList)) :: convertToTuples(tl(babyList))
-          end
+      let fun convertToTuples (babyList: string list) =
+        let val lineList = split_at(hd(babyList), #",")
+        in
+          if null(tl(babyList))
+          then [(hd(lineList),  tl(lineList))]
+          else (hd(lineList),  tl(lineList)) :: convertToTuples(tl(babyList))
+        end
       in
         convertToTuples(babyList)
       end
