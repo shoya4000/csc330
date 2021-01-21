@@ -38,15 +38,6 @@ fun processBabies (babyFile: string) =
   end
 
 (*
-   gets length of a list
-   list -> int
-*)
-fun listLength (list: 'A list) =
-  if null list
-  then 0
-  else 1 + listLength(tl(list))
-
-(*
    checks if baby name is in list
    string * (string * string list) list -> string option
 *)
@@ -228,10 +219,10 @@ fun max(data: string list, yearSt: string) =
    string list -> string
 *)
 fun avg(data: string list) =
-  " Avg: " ^ real_to_string(int_to_real(totalConfirm(data))/100.0) ^ "\n"
+  " Avg: " ^ real_to_string(int_to_real(totalConfirm(data))/int_to_real(100)) ^ "\n"
 
 (*
-   Get the appropriate data output from the data and processed list.
+   Get the appropriate data output from the data and processed list
    string * (string * string list) list * string -> string
 *)
 fun getDataForNames(input: string, processed: (string * string list) list, yearSt: string) =
@@ -261,8 +252,7 @@ fun babies_program (fileName, yearSt) =
     let
       val file = read_file(fileName)
       val processed = processBabies(file)
-      val length = listLength(processed)
-      val _ = print("Read " ^ int_to_string(length) ^ " babies. Starting year "^ yearSt ^". Each baby has 100 entries.\n")
+      val _ = print("Read " ^ int_to_string(length(processed)) ^ " babies" ^ dot ^ " Starting year "^ yearSt ^"" ^ dot ^ " Each baby has 100 entries" ^ dot ^ "\n")
       
       val names = read_stdin()
       val output = getDataForNames(names, processed, yearSt)
@@ -270,7 +260,6 @@ fun babies_program (fileName, yearSt) =
     in
       ()
     end
-        
 
 (*
 do not modify below this point
