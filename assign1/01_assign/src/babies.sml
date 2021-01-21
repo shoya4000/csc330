@@ -12,7 +12,7 @@ in
    Process the file into list of babies
    takes in the file string
    return list of names, with data associated with each
-   string -> (string * string list) list
+   string -> (string * string list * string) list
 *)
 
 fun processBabies (babyFile: string) =
@@ -114,13 +114,13 @@ fun for2019(data: string list) =
    Find first non-zero value in string list
    string list -> int
 *)
-fun findFirstNonZero (data: string list) =
+fun findFirstNonZero (data: string list, index: int) =
   if null(tl(data)) (*Last entry is total for consistency check*)
-    then getVal(hd(data))
+    then (getVal(hd(data)), index)
     else 
       if getVal(hd(data)) <> 0
-      then getVal(hd(data))
-      else findFirstNonZero(tl(data))
+      then (getVal(hd(data)), index)
+      else findFirstNonZero(tl(data), index + 1)
 
 (*
    Find first index where value appears
@@ -136,10 +136,10 @@ fun findFirstIndexOfValue (data: string list, value: int) =
    string list * string -> string
 *)
 fun first(data: string list, yearSt: string) =
-  let val value = findFirstNonZero(data)
+  let val value = findFirstNonZero(data, 0)
   in
-    let val index = findFirstIndexOfValue(data,value)
-    in " First: " ^ int_to_string(getVal(yearSt) + index) ^ " "^ int_to_string(value) ^ "\n"
+    let val index = #2 value
+    in " First: " ^ int_to_string(getVal(yearSt) + index) ^ " "^ int_to_string(#1 value) ^ "\n"
     end
   end
 
@@ -150,10 +150,10 @@ fun first(data: string list, yearSt: string) =
 fun last(data: string list, yearSt: string) =
   let val reversedData = tl(rev(data)) (*Last entry is total for consistency check*) 
   in
-    let val value = findFirstNonZero(reversedData)
+    let val value = findFirstNonZero(reversedData, 0)
     in
-      let val index = findFirstIndexOfValue(reversedData,value)
-      in " Last: " ^ int_to_string(getVal(yearSt) + 99 - index) ^ " "^ int_to_string(value) ^ "\n"
+      let val index = #2 value
+      in " Last: " ^ int_to_string(getVal(yearSt) + 99 - index) ^ " "^ int_to_string(#1 value) ^ "\n"
       end
     end
   end
