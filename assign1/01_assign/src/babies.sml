@@ -229,7 +229,12 @@ fun getDataForNames(input: string, processed: (string * string list * string) li
             val nameData = isIn(name, processed)
           in
             if isSome(nameData)
-            then name ^ "\n" ^ total(valOf(nameData)) ^ years(#1(valOf(nameData))) ^ for2019(#1(valOf(nameData))) ^ first(#1(valOf(nameData)), yearSt) ^ last(#1(valOf(nameData)), yearSt) ^ min(#1(valOf(nameData)), #2(valOf(nameData)), yearSt) ^ max(#1(valOf(nameData)), yearSt) ^ avg(#2(valOf(nameData))) ^ search(tl(nameList))
+            then 
+              let
+                val numData = #1(valOf(nameData))
+                val totalVal = #2(valOf(nameData))
+              in name ^ "\n" ^ total(valOf(nameData)) ^ years(numData) ^ for2019(numData) ^ first(numData, yearSt) ^ last(numData, yearSt) ^ min(numData, totalVal, yearSt) ^ max(numData, yearSt) ^ avg(totalVal) ^ search(tl(nameList))
+              end
             else name ^ "\nBaby name [" ^ name ^ "] was not found\n" ^ search(tl(nameList))
           end
     in
