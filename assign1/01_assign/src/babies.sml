@@ -17,12 +17,12 @@ fun splitLine(lineList: string list) =
     if null(tl(tl(lineList)))
     then ([hd(lineList)], hd(tl(lineList)))
     else 
-      let val splits = splitEnd(tl(lineList),total)
-      in (hd(lineList):: #1 splits, #2 splits)
+      let val (values, total) = splitEnd(tl(lineList),total)
+      in (hd(lineList):: values, total)
       end
   in 
-    let val split = splitEnd(tl(lineList), "")
-    in (hd(lineList), #1 split, #2 split)
+    let val (values, total) = splitEnd(tl(lineList), "")
+    in (hd(lineList),values, total)
     end
   end 
 
@@ -59,11 +59,16 @@ fun isIn(name: string, list: (string * string list * string) list) =
   if null list
   then NONE
   else
-    if #1 (hd(list)) = name
-    then
-      SOME (#2(hd(list)), #3(hd(list)))
-    else
-      isIn(name, tl(list))
+    let
+      val (entryName, entryData, entryTotal) = hd(list)
+    in
+      if entryName = name
+      then
+        SOME (entryData, entryTotal)
+      else
+        isIn(name, tl(list))
+    end
+    
 
 (*
    uses fromString to convert string to int option, and then gets int from that 
@@ -136,9 +141,9 @@ fun findFirstNonZero (data: string list, index: int) =
    string list * string -> string
 *)
 fun first(data: string list, yearSt: string) =
-  let val value = findFirstNonZero(data, 0)
+  let val (value, index) = findFirstNonZero(data, 0)
   in
-    " First: " ^ int_to_string(getVal(yearSt) + #2 value) ^ " "^ int_to_string(#1 value) ^ "\n"
+    " First: " ^ int_to_string(getVal(yearSt) + index) ^ " "^ int_to_string(value) ^ "\n"
   end
 
 (*
@@ -148,9 +153,9 @@ fun first(data: string list, yearSt: string) =
 fun last(data: string list, yearSt: string) =
   let val reversedData = rev(data)
   in
-    let val value = findFirstNonZero(reversedData, 1)
+    let val (value, index) = findFirstNonZero(reversedData, 1)
     in
-      " Last: " ^ int_to_string(getVal(yearSt) + length(data) - #2 value) ^ " "^ int_to_string(#1 value) ^ "\n"
+      " Last: " ^ int_to_string(getVal(yearSt) + length(data) - index) ^ " "^ int_to_string(value) ^ "\n"
     end
   end
 
@@ -171,11 +176,9 @@ fun min(data: string list, total: string, yearSt: string) =
         else result
       end
   in
-    let val value = findMin(data, 0)
+    let val (value, index) = findMin(data, 0)
     in
-      let val index = #2 value
-      in " Min: " ^ int_to_string(getVal(yearSt) + index) ^ " " ^ int_to_string(#1 value) ^ "\n"
-      end
+      " Min: " ^ int_to_string(getVal(yearSt) + index) ^ " " ^ int_to_string(value) ^ "\n"
     end
   end
 
@@ -197,9 +200,9 @@ fun max(data: string list, yearSt: string) =
       end
   in
     let
-      val value = findMax(data, 0)
+      val (value, index) = findMax(data, 0)
     in
-      " Max: " ^ int_to_string(getVal(yearSt) + #2 value) ^ " " ^ int_to_string(#1 value) ^ "\n"
+      " Max: " ^ int_to_string(getVal(yearSt) + index) ^ " " ^ int_to_string(value) ^ "\n"
     end
   end
 
@@ -231,8 +234,7 @@ fun getDataForNames(input: string, processed: (string * string list * string) li
             if isSome(nameData)
             then 
               let
-                val numData = #1(valOf(nameData))
-                val totalVal = #2(valOf(nameData))
+                val (numData, totalVal) = valOf(nameData)
               in name ^ "\n" ^ total(valOf(nameData)) ^ years(numData) ^ for2019(numData) ^ first(numData, yearSt) ^ last(numData, yearSt) ^ min(numData, totalVal, yearSt) ^ max(numData, yearSt) ^ avg(totalVal) ^ search(tl(nameList))
               end
             else name ^ "\nBaby name [" ^ name ^ "] was not found\n" ^ search(tl(nameList))
