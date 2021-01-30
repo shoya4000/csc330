@@ -207,11 +207,11 @@ fun max(data: string list, yearSt: string) =
   end
 
 (*
-   Find avg for name use over 100 years of data
-   string list -> string
+   Find avg for name use over number of years of data
+   string list * int -> string
 *)
-fun avg(total: string) =
-  " Avg: " ^ real_to_string(int_to_real(getVal(total))/int_to_real(100)) ^ "\n"
+fun avg(total: string, numEntries: int) =
+  " Avg: " ^ real_to_string(int_to_real(getVal(total))/int_to_real(numEntries)) ^ "\n"
 
 (*
    Get the appropriate data output from the data and processed list
@@ -235,7 +235,7 @@ fun getDataForNames(input: string, processed: (string * string list * string) li
             then 
               let
                 val (numData, totalVal) = valOf(nameData)
-              in name ^ "\n" ^ total(valOf(nameData)) ^ years(numData) ^ for2019(numData) ^ first(numData, yearSt) ^ last(numData, yearSt) ^ min(numData, totalVal, yearSt) ^ max(numData, yearSt) ^ avg(totalVal) ^ search(tl(nameList))
+              in name ^ "\n" ^ total(valOf(nameData)) ^ years(numData) ^ for2019(numData) ^ first(numData, yearSt) ^ last(numData, yearSt) ^ min(numData, totalVal, yearSt) ^ max(numData, yearSt) ^ avg(totalVal, length(numData)) ^ search(tl(nameList))
               end
             else name ^ "\nBaby name [" ^ name ^ "] was not found\n" ^ search(tl(nameList))
           end
@@ -248,7 +248,8 @@ fun babies_program (fileName, yearSt) =
     let
       val file = read_file(fileName)
       val processed = processBabies(file)
-      val _ = print("Read " ^ int_to_string(length(processed)) ^ " babies" ^ dot ^ " Starting year "^ yearSt ^"" ^ dot ^ " Each baby has 100 entries" ^ dot ^ "\n")
+      val numEntries = length(#2(hd(processed)))
+      val _ = print("Read " ^ int_to_string(length(processed)) ^ " babies" ^ dot ^ " Starting year "^ yearSt ^"" ^ dot ^ " Each baby has " ^ int_to_string(numEntries) ^ " entries" ^ dot ^ "\n")
 
       val names = read_stdin()
       val output = getDataForNames(names, processed, yearSt)
