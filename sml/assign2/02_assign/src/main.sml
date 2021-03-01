@@ -41,11 +41,11 @@ fun ident x = x
 fun str_list_string (lst) =
     str_list_any(lst, ident)
 
-fun test (num,exp, errMsg) =
+fun test (exp, errMsg) =
     if exp then
-      print("test #"^Int.toString(num)^ " succeeded: " ^ errMsg ^ "\n")
+      ()
     else
-      print("test #"^Int.toString(num)^ " failed: " ^ errMsg ^ "\n")
+      print("test failed: " ^ errMsg ^ "\n")
 
 fun assert (exp, errMsg) =
     if exp then
@@ -54,15 +54,26 @@ fun assert (exp, errMsg) =
       (TextIO.output (TextIO.stdErr, errMsg ^ "\n"); OS.Process.exit(OS.Process.failure))
 
 fun test_empty() =
-    test(1, size_set(EmptySet Int.compare) = 0, "Test empty set")
+    test(size_set(EmptySet Int.compare) = 0, "Test empty set")
 
 fun test_set_int() =
     let
       val se = EmptySet Int.compare
       val sa = se ++ 1 ++ 2 ++ 3 ++ 5 ++ 3 ++ 2
       val sb = se ++ 9 ++ 3 ++ 2
-      val _ = test(2, sb IDENTICAL list_to_set ([2,3,9], Int.compare), "testing simple insertion")
-      val _ = test(3, sa IDENTICAL list_to_set ([1,2,3,5], Int.compare), "testing duplicate insertion")
+      val _ = test(sb IDENTICAL list_to_set ([2,3,9], Int.compare), "testing simple insertion")
+      val _ = test(sa IDENTICAL list_to_set ([1,2,3,5], Int.compare), "testing duplicate insertion")
+    in
+      ()
+    end
+
+fun test_set_int_2() =
+    let
+      val se = EmptySet Int.compare
+      val sa = se ++ 1 ++ 1 ++ 1 ++ 1 -- 2
+      val sb = se ++ 9 ++ 3 ++ 2 -- 4
+      val _ = test(sa IDENTICAL list_to_set ([1], Int.compare), "testing more duplicate insertions")
+      val _ = test(sb IDENTICAL list_to_set ([2,3,9], Int.compare), "testing remove non-exist element")
     in
       ()
     end
@@ -72,12 +83,53 @@ fun test_set_ops() =
       val se = EmptySet Int.compare
       val sa = se ++ 1 ++ 2 ++ 3 ++ 5 ++ 3 ++ 2
       val sb = se ++ 9 ++ 3 ++ 2 --2
-      val _ = test(4, is_empty_set se, "testing is_empty_set")
-      val _ = test(5, sb UNION sb IDENTICAL sb, "testing union")
-      val _ = test(6, sb INTERSECT se IDENTICAL se, "testing intersect")
-      val _ = test(7, sb EXCEPT sb IDENTICAL se, "testing except")
-      val _ = test(8, not(2 IN sb), "testing IN")
-      val _ = test(9, se IS_SUBSET_OF sb, "testing IS_SUBSET_OF")
+      val _ = test(is_empty_set se, "testing is_empty_set")
+      val _ = test(sb UNION sb IDENTICAL sb, "testing union")
+      val _ = test(sb INTERSECT se IDENTICAL se, "testing intersect")
+      val _ = test(sb EXCEPT sb IDENTICAL se, "testing intersect")
+      val _ = test(not(2 IN sb), "testing IN")
+      val _ = test(se IS_SUBSET_OF sb, "testing IS_SUBSET_OF")
+    in
+      ()
+    end
+
+
+fun test_set_ops_2() =
+    let
+      val e1 = EmptySet Int.compare
+      val e2 = EmptySet Int.compare
+      val _ = test(e1 IS_SUBSET_OF e2, "compare two empty sets")
+      val s1 = e1 ++ 1 ++ 2 ++ 3
+      val _ = test(e1 IS_SUBSET_OF s1, "empty set is a subset of any set")
+      val _ = test(not (s1 IS_SUBSET_OF e1), "non-empty set is not a subset of an empty set")
+      val s2 = e2 ++ 1 ++ 2 ++ 5 ++ 6 -- 6 -- 5
+      val _ = test(s2 IS_SUBSET_OF s1, "[1,2] is a subset of [1,2,3]")
+     
+      val _ = test(not(s1 IS_SUBSET_OF s2), "[1,2,3] is not a subset of [1,2]")
+      val s3 = e2 ++ 1 ++ 2 ++ 3
+      val _ = test(s1 IS_SUBSET_OF s3, "[1,2,3] is a subset of [1,2,3]")
+
+      val s4 = e1 ++ 1 ++ 2
+      val s5 = e1 ++ 1 ++ 3 ++ 4
+      val s6 = e1 ++ 1 ++ 2 ++ 3 ++ 4
+      val _ = test(s4 UNION s5 IDENTICAL s6, "[1,2] union [1,3,4] = [1,2,3,4]")
+      val _ = test(s6 UNION s6 IDENTICAL s6, "[1,2,3,4] union [1,2,3,4] = [1,2,3,4]")
+      val _ = test(s6 UNION e1 IDENTICAL s6, "[1,2,3,4] union [] = [1,2,3,4]")
+      
+      
+
+      val s7 = e1 ++ 1 ++ 2 ++ 3 ++ 4 ++ 5
+      val s8 = e1 ++ 2 ++ 5 ++ 8
+      val s9 = e1 ++ 2 ++ 5
+      val _ = test(s7 INTERSECT s8 IDENTICAL s9, "[1,2,3,4,5] intersect [2,5,8] = [2,5]")
+      val _ = test(s7 INTERSECT e1 IDENTICAL e1, "[1,2,3,4,5] intersect [] = []")
+
+      val s10 = e1 ++ 1 ++ 3 ++ 4
+      val _ = test(s7 EXCEPT s9 IDENTICAL s10, "[1,2,3,4,5] except [2,5] = [1,3,4]")
+      val _ = test(s7 EXCEPT e1 IDENTICAL s7, "[1,2,3,4,5] except [] = [1,2,3,4,5]")
+      val _ = test(e1 EXCEPT s7 IDENTICAL e1, "[] except [1,2,3,4,5] = []")
+      val _ = test(not(2 IN s10), "2 is not in [1,3,4]")
+      val _ = test(not(2 IN e1), "2 is not in []")
     in
       ()
     end
@@ -86,8 +138,19 @@ fun test_conversions() =
     let
       val se = EmptySet Int.compare
       val sb = se ++ 9 ++ 3 ++ 2
-      val _ = test(10, str_set(se, Int.toString) = "{}", "testing set_str")
-      val _ = test(11, set_to_list(sb) = [2,3,9], "testing set_to_list")
+      val _ = test(str_set(se, Int.toString) = "{}", "testing set_str")
+      val _ = test(set_to_list(sb) = [2,3,9], "testing set_to_list")
+    in
+      ()
+    end
+
+fun test_conversions_2() =
+    let
+      val se = EmptySet String.compare
+      val sb = se ++ "zbb" ++ "c" ++ "d" ++ "b" ++ "z"
+      val _ = test(str_set(sb, String.toString) = "{b:c:d:z:zbb}", "set is b,c,d,z,zbb")
+      val sc = se ++ "abb" ++ "c" ++ "d" ++ "b" ++ "z"
+      val _ = test(str_set(sc, String.toString) = "{abb:b:c:d:z}", "set is abb,b,c,d,z")
     in
       ()
     end
@@ -96,8 +159,8 @@ fun test_others() =
     let
       val se = EmptySet String.compare
       val sa = se ++ "" ++ "a" ++ "ab" ++ "abc" ++ "ab" ++ "ac" ++ " a" 
-      val _ = test(12, max_in_set(sa) = "ac", "testing max_in_set")
-      val _ = test(13, min_in_set(sa) = "", "testing min_in_set")
+      val _ = test(max_in_set(sa) = "ac", "testing max_in_set")
+      val _ = test(min_in_set(sa) = "", "testing min_in_set")
     in
       ()
     end
@@ -106,8 +169,7 @@ fun test_pairs() =
     let
       val se = EmptySet comp_pair_int
       val sa = se ++ (1,3) ++ (1,2)
-
-      val _   = test(14, str_set(sa, str_pair_int) = "{(1:2):(1:3)}",  "testing a pair")
+      val _   = test(str_set(sa, str_pair_int) = "{(1:2):(1:3)}",  "testing a pair")
     in
       ()
     end
@@ -116,7 +178,7 @@ fun test_lists() =
     let
       val se = EmptySet comp_list_int
       val sa = se ++ [1,3] ++ [1,2] ++ [] ++ [2,3,9]
-      val _   = test(15, str_set(sa, str_list_int) = "{[]:[1,2]:[1,3]:[2,3,9]}",  "testing a list")
+      val _   = test(str_set(sa, str_list_int) = "{[]:[1,2]:[1,3]:[2,3,9]}",  "testing a list")
     in
       ()
     end
@@ -125,13 +187,79 @@ fun test_lists_strings() =
     let
       val se = EmptySet comp_list_string
       val sa = se ++ ["","abc"] ++ ["daniel","robert"] ++ [] ++ ["Canada","Japan","Brazil"] ++ ["","abc"]
-      val _   = test(16, str_set(sa, str_list_string) = "{[]:[,abc]:[Canada,Japan,Brazil]:[daniel,robert]}", 
+      val _   = test(str_set(sa, str_list_string) = "{[]:[,abc]:[Canada,Japan,Brazil]:[daniel,robert]}", 
                       "testing a list of strings")
     in
       ()
     end
 
 
+(* Kush *)
+fun test_lists_2() = 
+  let
+    val s1 = EmptySet comp_list_int
+    val s2 = EmptySet comp_list_string
+    val s3 = s1 ++ [1,2] ++ [4,5] ++ [5,6]
+    val s4 = s1 ++ [4,5] ++ [7,7,7]
+    val s5 = ["Hi", "this", "is", "a", "string list"]
+    val s6 = ["and", "another", "string list"]
+    val s7 = ["another", "list"]
+    val s8 = ["hi", "and", ""]
+    val s9 = s2 ++ s8 ++ s7
+    val s10 = s2 ++ s5 ++ s6 ++ s7
+    val s11 = EmptySet Int.compare
+    val s12 = s11 ++ 1 ++ 2 ++ 44 ++ 99 ++ 3
+    val s13 = EmptySet String.compare
+    val s14 = s13 ++ "1" ++ "2" ++ "44" ++ "99" ++ "3"
+    val _ = test( (s9 EXCEPT s10) IDENTICAL s9--s7, "Testing String_List Sets: [Except, Identical]")
+    val _ = test(s6 IN s10, "Testing String_List Sets: [Subset]")
+    val _ = test(str_set(s3, str_list_int) = "{[1,2]:[4,5]:[5,6]}", "Testing Int_List Sets: [String-Set]")
+    val _ = test(Set([str_set(map_set(s12, String.compare, Int.toString), ident)], String.compare) IDENTICAL Set([str_set(s14, ident)], String.compare), "Testing Int Set: [Map, Str]")
+  in
+    ()
+  end
+
+
+(* Greay *)
+fun greay_tests() =
+    let
+        fun addFive(a) = a + 5
+        val s0 = EmptySet Int.compare
+        val l0 = EmptySet comp_list_int
+        val s1 = s0 ++ 2 ++ 5 ++ 4 ++ 1 ++ 4
+        val s2 = s0 ++ 0 ++ ~1 ++ 1 ++ 5 ++ ~5 ++ 5 ++ ~2
+        val l1 = l0 ++ [1,2,3] ++ [2,3,4] ++ [] ++ [1,2] ++ [5] -- []
+        val l2 = l0 ++ [1,2,3] ++ [2,3,4] ++ [] ++ [1,2] ++ [5] ++ []
+        val _ = test(map_set(s1, Int.compare, addFive) IDENTICAL list_to_set ([6,7,9,10], Int.compare), "testing mapped set")
+        val _ = test(map_set(s1, Int.compare, addFive) IDENTICAL list_to_set ([6,7,9,10], Int.compare), "testing insert list & remove list with emptylist")
+        val _ = test(str_set(l1, str_list_int) = "{[1,2]:[1,2,3]:[2,3,4]:[5]}",  "testing remove list with emptylist")
+        val _ = test(str_set(l2, str_list_int) = "{[]:[1,2]:[1,2,3]:[2,3,4]:[5]}",  "testing insert list with with duplicate emptylist")
+        val _ = test(str_set(s2, Int.toString) = "{~5:~2:~1:0:1:5}",  "testing insert with negative ints")
+    in ()
+    end
+
+
+val tests = [
+  ("extra yiping test conversions 2", test_conversions_2),
+  ("extra yiping test set ops 2", test_set_ops_2),
+  ("extra yiping test set int 2", test_set_int_2),
+  ("extra kush test", test_lists_2),
+  ("extra greay tests", greay_tests)
+  ]
+
+fun run_tests testLst =
+    let
+      fun run_test (name, test) =
+          let
+            val _ = print ("Running test " ^ name ^ "\n")
+          in
+            test()
+          end
+      val _ = print("starting tests...\n")
+    in
+      List.map run_test testLst
+    end
+        
 fun main (prog_name, args) =
     let
       val _ = test_empty()
@@ -142,10 +270,12 @@ fun main (prog_name, args) =
       val _ = test_pairs()
       val _ = test_lists()
       val _ = test_lists_strings()
+      (* extra *)
+      val _ = run_tests(tests); 
     in
-      print("Finished testing\n"); exit()
+      print("Finished testing\n");
+      exit()
     end
-
-                                
+                           
 end
 end    

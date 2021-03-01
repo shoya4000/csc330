@@ -56,9 +56,20 @@ fun insert_into_set(s,v) =
             Set(insert(set_to_list(s),v), order)
         end
 
+fun list_to_set(lst, f) =
+    let fun lst_set (lst, acc) =
+        case lst of
+            [] => acc
+        | [x] => insert_into_set(acc, x)
+        | x::xs' => lst_set(xs', insert_into_set(acc, x))
+    in
+        lst_set(lst, EmptySet f)
+    end
+    
+
 fun in_set(s, v) =
     case s of
-        EmptySet(order) => raise SetIsEmpty
+        EmptySet(_) => false
     | Set(_,order) =>
         let fun find(lst, v) =
             case lst of 
@@ -101,15 +112,15 @@ fun equal_set(s, t) =
     end
 
 fun union_set(s, t) =
-    if equal_set(s,t) then s else
+    if equal_set(s,t) then s else if is_empty_set(t) then s else
     let val x = set_to_list(s)
-        fun union_lst (xs,t) =
+        fun union_lst (xs,t, acc) =
             case xs of
-                [] => t
-            | [x] => insert_into_set(t,x)
-            | x::xs' => union_lst(xs, insert_into_set(t,x))
+                [] => set_to_list(t)
+            | [x] => if in_set(t,x) then acc@set_to_list(t) else x::acc@set_to_list(t)
+            | x::xs' => if in_set(t,x) then union_lst(xs', t, acc) else union_lst(xs', t, x::acc)
     in
-        union_lst(x,t)
+        list_to_set(union_lst(x,t, []),getOrderFn(s))
     end
 
 fun intersect_set(s, t) =
@@ -121,7 +132,7 @@ fun intersect_set(s, t) =
         | [x] => if in_set(t,x) then x::acc else acc
         | x::xs' => if in_set(t,x) then intersect_lst(xs',t, x::acc) else intersect_lst(xs',t,acc)
     in
-        Set(intersect_lst(x, t, []),getOrderFn(s))
+        list_to_set(intersect_lst(x, t, []),getOrderFn(s))
     end
 
 fun except_set(s, t) =
@@ -137,22 +148,29 @@ fun except_set(s, t) =
     end
 
 fun is_subset_of(s, t) =
-    is_empty_set(s) orelse size_set(intersect_set(s,t)) <> 0
-        
-fun list_to_set(lst, f) =
-    case lst of
-        [] => EmptySet f
-    | _ => Set(lst,f)
+    is_empty_set(s) orelse size_set(intersect_set(s,t)) = size_set(s) 
 
 fun str_set (s, fstr) =
-    case s of
-        EmptySet(_) => "{}"
-    | Set([x], _) => fstr(x)
-    | Set(x::xs', order) => fstr(x) ^ "," ^ str_set(Set(xs', order),fstr)
-    | _ => raise SetIsEmpty
+    let fun inner_to_string (s, fstr) =
+        case s of
+            EmptySet(_) => ""
+        | Set([x], _) => fstr(x)
+        | Set(x::xs', order) => fstr(x) ^ ":" ^ inner_to_string(Set(xs', order),fstr)
+        | _ => raise SetIsEmpty
+    in 
+        "{"^ inner_to_string(s, fstr) ^ "}"
+    end
       
 fun map_set (s, fcomp, f) =
-    EmptySet fcomp
+    let val x = set_to_list(s)
+    fun mp_set (lst, acc) =
+        case lst of
+            [] => acc
+        | [x] => insert_into_set(acc, f x)
+        | x::xs' => mp_set(xs', insert_into_set(acc, f x))
+    in
+        mp_set(x, EmptySet fcomp)
+    end
 
 fun s -- v = remove_from_set(s,v)
 fun s ++ v = insert_into_set(s,v)
@@ -163,25 +181,13 @@ fun s EXCEPT t = except_set(s, t)
 fun v IN s = in_set(s, v)
 fun s IS_SUBSET_OF t = is_subset_of(s, t)
 
-datatype options = IntList of int list | StringList of string list
-
-fun sum(nums: int list) =
-    case nums of
-        [] => 0
-    | [x] => x
-    | x::xs' => sum(xs') + x
-
-fun concat(strs: string list) =
-    case strs of
-        [] => ""
-    | [x] => x
-    | x::xs' => concat(xs') ^ x
-
 fun comp_list_any (a: 'a list, b: 'a list, fcomp : ('a * 'a) -> order) =
-    (*case a of IntList a => fcomp(sum(a), sum(b))
-    | StringList a => fcomp(concat(a), concat(b))*)
-    EQUAL
-
+    case (a,b) of
+        ([],[]) => EQUAL
+    | ([x],[y]) => fcomp(x,y)
+    | (x::xs',y::ys') => let val result = fcomp(x,y) in if result = EQUAL then comp_list_any(xs',ys', fcomp) else result end
+    | (a,[]) => GREATER
+    | ([],b) => LESS
                           
 end
 end    

@@ -7,4 +7,4 @@ run: set-image.x86-linux
 	sml @SMLload  set-image.x86-linux 
 
 clean:
-	rm -f babies-image.x86-linux
+	rm -f set-image.x86-linux
