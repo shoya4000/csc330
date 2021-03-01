@@ -240,6 +240,15 @@ fun greay_tests() =
 
 
 val tests = [
+    ("test empty", test_empty),
+    ("test set int", test_set_int),
+    ("test set ops", test_set_ops),
+    ("test set conversions", test_conversions),
+    ("test others", test_others),
+    ("test pairs", test_pairs),
+    ("test lists", test_lists),
+    ("test lists strings", test_lists_strings),
+  
   ("extra yiping test conversions 2", test_conversions_2),
   ("extra yiping test set ops 2", test_set_ops_2),
   ("extra yiping test set int 2", test_set_int_2),
