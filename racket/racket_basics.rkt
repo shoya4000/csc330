@@ -41,3 +41,11 @@ s
 sixteen
 (define sixteen1 ((pow2 4) 2))
 sixteen1
+
+(define (repeat n th)
+    (th)
+    (if (= n 0)
+        #t
+        (repeat (- n 1) th)))
+
+(repeat 5 (lambda () (print "hello")))
