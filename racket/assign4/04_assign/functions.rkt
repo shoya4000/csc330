@@ -45,21 +45,12 @@
                     (cons (car pr) (f (cdr pr) (+ ans 1)) ))))))
     (f s 0)))
 
+(define (stream-addition stream1 stream2)
+ (cons (+ (car(stream1)) (car(stream2))) (lambda () (stream-addition (cdr(stream1)) (cdr(stream2))))))
+
 ;#5
 (define fibo-stream
-  (letrec
-      ([f (lambda (x)
-            (cons x (lambda () (f (+ x 1)))))])
-    (lambda () (f 0))))
-
-  (cons 1 (cons 1 (stream-add fibo-stream (stream-rest fibo-stream))))
-
-  (stream-cons 1 (stream-cons 1 (stream-add fibonacci (stream-rest fibonacci)))))
-;  (letrec
-;      ([f (lambda (x)
-;            (cons x (lambda () (f (+ x 1)))))])
-;    (lambda () (f 0))))
-
+  (lambda() (cons 0(lambda()(cons 1 (lambda() (stream-addition  (cdr(fibo-stream)) fibo-stream)))))))
 
 ;#6
 (define (filter-stream tester s)
@@ -76,11 +67,46 @@
   (filter-stream (lambda (i) (equal? (string->list(number->string i)) (reverse (string->list(number->string i))))) nat-num-stream))
 
 ;#8 macro create-stream
+(define-syntax create-stream
+  (syntax-rules (define letrec lambda cons +)
+    [(create-stream name using f starting at i0 with increment delta)
+    (define name
+      (letrec
+      ([fun (lambda (x)
+            (cons (f x) (lambda () (fun (+ x delta)))))])
+    (lambda () (fun i0)))
+    )]))
 
 ; part 2
 
 ;#1
-(define vector-assoc #f)
+(define (vector-assoc v vec)
+  (letrec ((f (lambda (index)
+    (if (= index (vector-length vec))
+      #f
+      (if (pair? (vector-ref vec index))
+        (if (equal? v (car(vector-ref vec index)))
+          (vector-ref vec index)
+          (f (+ index 1)))
+        (f (+ index 1)))))))
+  (f 0)))
+
 
 ;#2
-(define cached-assoc #f)
+(define (cached-assoc xs n)
+  (define cache (make-vector n #f))
+  (define cache-slot 0)
+  (define (cache-mutate v)
+    (if (= 0 n)
+      null
+      (vector-set! cache (modulo cache-slot n) v))
+    (set! cache-slot (+ cache-slot 1))
+    v)
+  (lambda (v)
+    (let ((found (vector-assoc v cache)))
+    (if (pair? found)
+        found
+        (let ((assoced (assoc v xs)))
+        (if (pair? assoced)
+            (cache-mutate assoced)
+            #f))))))
