@@ -542,62 +542,62 @@
    )
   )
 
-;;; (define hw5-tests-part-D
-;;;   (test-suite
-;;;    "Tests for HW 5 Part D"
+(define hw5-tests-part-D
+  (test-suite
+   "Tests for HW 5 Part D"
 
 
-;;;    (test-case "mupl-map"
-;;;               (define addtwo (fun "addone" "x" (add (var "x") (int 2))))
-;;;               (define mupl-map-addtwo (call mupl-map addtwo))
-;;;               (check-equal? (handler (eval-exp (call mupl-map-addtwo (aunit))))
-;;;                             (aunit))
+   (test-case "mupl-map"
+              (define addtwo (fun "addone" "x" (add (var "x") (int 2))))
+              (define mupl-map-addtwo (call mupl-map addtwo))
+              (check-equal? (handler (eval-exp (call mupl-map-addtwo (aunit))))
+                            (aunit))
 
-;;;               (define my-mupl-list (apair (int 23) (apair (int 42) (aunit))))
-;;;               (define my-answers (apair (int 25) (apair (int 44) (aunit))))
-;;;               (check-equal?
-;;;                    (handler (eval-exp (call mupl-map-addtwo my-mupl-list)))
-;;;                     my-answers))
+              (define my-mupl-list (apair (int 23) (apair (int 42) (aunit))))
+              (define my-answers (apair (int 25) (apair (int 44) (aunit))))
+              (check-equal?
+                   (handler (eval-exp (call mupl-map-addtwo my-mupl-list)))
+                    my-answers))
 
-;;;    (test-case "mupl-map"
-;;;               ; mupl-map
-;;;               (check-equal? (handler (eval-exp
-;;;                              (call (call mupl-map (fun #f "x" (add (int 1) (var "x"))))
-;;;                                    (apair (int 1) (apair (int 2) (aunit))))))
-;;;                             (apair (int 2) (apair (int 3) (aunit))) "map normal list")
-;;;               (check-equal? (handler (eval-exp
-;;;                              (call (call mupl-map (fun #f "x" (add (int 1) (var "x"))))
-;;;                                    (apair (int 1) (aunit)))))
-;;;                             (apair (int 2) (aunit)) "map single item list")
-;;;               (check-equal? (handler (eval-exp
-;;;                              (call (call mupl-map (fun #f "x" (add (int 1) (var "x"))))
-;;;                                    (aunit))))
-;;;                             (aunit) "map empty list")
-;;;               )
+   (test-case "mupl-map"
+              ; mupl-map
+              (check-equal? (handler (eval-exp
+                             (call (call mupl-map (fun #f "x" (add (int 1) (var "x"))))
+                                   (apair (int 1) (apair (int 2) (aunit))))))
+                            (apair (int 2) (apair (int 3) (aunit))) "map normal list")
+              (check-equal? (handler (eval-exp
+                             (call (call mupl-map (fun #f "x" (add (int 1) (var "x"))))
+                                   (apair (int 1) (aunit)))))
+                            (apair (int 2) (aunit)) "map single item list")
+              (check-equal? (handler (eval-exp
+                             (call (call mupl-map (fun #f "x" (add (int 1) (var "x"))))
+                                   (aunit))))
+                            (aunit) "map empty list")
+              )
 
-;;;    (test-case "mupl-mapAddN"
-;;;               (define input (apair (int 25) (apair (int 44) (aunit))))
-;;;               (define output (apair (int 26) (apair (int 45) (aunit))))
-;;;               (check-equal? (handler (eval-exp (call (call mupl-mapAddN (int 1)) input))) output))
+   (test-case "mupl-mapAddN"
+              (define input (apair (int 25) (apair (int 44) (aunit))))
+              (define output (apair (int 26) (apair (int 45) (aunit))))
+              (check-equal? (handler (eval-exp (call (call mupl-mapAddN (int 1)) input))) output))
 
-;;;    (test-case "mupl-mapAddN 2"
-;;;               (check-equal? (handler (eval-exp (call (call mupl-mapAddN (int 7))
-;;;                                             (racketlist->mupllist '()))))
-;;;                             (aunit) "mapAddN empty list")
-;;;               )
+   (test-case "mupl-mapAddN 2"
+              (check-equal? (handler (eval-exp (call (call mupl-mapAddN (int 7))
+                                            (racketlist->mupllist '()))))
+                            (aunit) "mapAddN empty list")
+              )
 
-;;;    (test-case "mupl-mapAddN 3"
-;;;               (check-equal? (handler (eval-exp (call (call mupl-mapAddN (int 7))
-;;;                                             (racketlist->mupllist (list (int 3) (int 4) (int 9))))))
-;;;                             (racketlist->mupllist (list (int 10) (int 11) (int 16))) "mapAddN +7")
-;;;               )
+   (test-case "mupl-mapAddN 3"
+              (check-equal? (handler (eval-exp (call (call mupl-mapAddN (int 7))
+                                            (racketlist->mupllist (list (int 3) (int 4) (int 9))))))
+                            (racketlist->mupllist (list (int 10) (int 11) (int 16))) "mapAddN +7")
+              )
 
-;;;    (test-case "mupl-mapAddN 4"
-;;;               (check-equal? (handler (eval-exp (call (call mupl-mapAddN (int 7))
-;;;                                             (racketlist->mupllist (list (int 3))))))
-;;;                             (racketlist->mupllist (list (int 10))) "mapAddN single item list")
-;;;               )
-;;;    ))
+   (test-case "mupl-mapAddN 4"
+              (check-equal? (handler (eval-exp (call (call mupl-mapAddN (int 7))
+                                            (racketlist->mupllist (list (int 3))))))
+                            (racketlist->mupllist (list (int 10))) "mapAddN single item list")
+              )
+   ))
 
 
 (run-tests hw5-tests-part-A1)
@@ -609,4 +609,4 @@
 (run-tests hw5-tests-part-B4)
 (run-tests hw5-tests-part-B5)
 (run-tests hw5-tests-part-C)
-;;; (run-tests hw5-tests-part-D)
+(run-tests hw5-tests-part-D)

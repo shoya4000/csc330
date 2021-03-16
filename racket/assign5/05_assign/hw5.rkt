@@ -30,7 +30,7 @@
           lst)))
       
 (define (racketlist->mupllist lst)
- (if (null? lst)
+  (if (null? lst)
       (aunit)
       (if (list? (car lst))
           (apair (racketlist->mupllist (car lst)) (racketlist->mupllist (cdr lst)))
@@ -84,8 +84,8 @@
          (let ([v (eval-under-env (snd-e e) env)])
            (if (apair? v)
                (apair-e2 v)
-               (error "MUPL fst applied to non-pair")))]
-        [(isaunit? e)
+               (error "MUPL snd applied to non-pair")))]
+         [(isaunit? e)
           (let ([v (eval-under-env (isaunit-e e) env)])
            (if (aunit? v)
                (int 1)
@@ -116,15 +116,25 @@
 
 ;; Problem C
 
-(define (ifaunit e1 e2 e3) (if (aunit? e1) e2 e3))
+(define (ifaunit e1 e2 e3) (ifeq (int 1) (isaunit e1) e2 e3))
 
-(define (mlet* lstlst e2) "CHANGE")
+(define (mlet* lstlst e2)
+  (if (null? lstlst)
+      e2
+      (mlet (car(car lstlst)) (cdr(car lstlst)) (mlet* (cdr lstlst) e2))))
 
-(define (ifeq e1 e2 e3 e4) "CHANGE")
+(define (ifeq e1 e2 e3 e4)
+  (ifgreater e1 e2 e4 (ifgreater e2 e1 e4 e3)))
 
 ;; Problem D
 
-(define mupl-map "CHANGE")
+(define mupl-map 
+  (fun "mupl-map" "f"
+    (fun #f "lst"
+     (ifaunit (var "lst")
+      (aunit)
+      (apair (call (var "f") (fst (var "lst")))
+             (call (call (var "mupl-map") (var "f")) (snd (var "lst"))))))))
 ;; this binding is a bit tricky. it must return a function.
 ;; the first two lines should be something like this:
 ;;
@@ -141,4 +151,5 @@
 
 (define mupl-mapAddN
   (mlet "map" mupl-map
-        "CHANGE (notice map is now in MUPL scope)"))
+    (fun #f "N"
+      (call (var "map") (fun "addNtoXitem" "x" (add (var "x") (var "N")))))))
