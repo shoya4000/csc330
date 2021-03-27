@@ -34,7 +34,7 @@ class MyBoard < Board
   def initialize (game)
     super
     @current_block = MyPiece.next_piece(self)
-    @cheat = false
+    @cheat = 0
   end
 
   def rotate_180
@@ -47,20 +47,20 @@ class MyBoard < Board
   def cheat
     if !game_over? and @game.is_running? and @score > 99
       @score -= 100
-      @cheat = true
+      @cheat = 1
     end
     draw
   end
 
   # gets the next piece
   def next_piece
-    if (@cheat)
+    if (@cheat == 0)
       @current_block = MyPiece.next_piece(self)
       @current_pos = nil
     else
       @current_block = MyPiece.cheat_piece(self)
       @current_pos = nil
-      @cheat = false
+      @cheat = 0
     end
   end
 
@@ -98,16 +98,16 @@ class MyTetris < Tetris
     @root.bind('c' , proc {@board.cheat})
   end
 
-  class MyTetrisChallenge < MyTetris
+end
 
-  end
+class MyTetrisChallenge < MyTetris
 
-  class MyPieceChallenge < MyPiece
+end
 
-  end
+class MyPieceChallenge < MyPiece
 
-  class MyBoardChallenge < MyBoard
+end
 
-  end
+class MyBoardChallenge < MyBoard
 
 end
