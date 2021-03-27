@@ -1,13 +1,13 @@
 # Programming Languages, Homework 6, hw6graphics.rb
 
-# This file provides an interface to a wrapped Tk library. 
+# This file provides an interface to a wrapped Tk library.
 
 require 'tk'
 
 class TetrisRoot
   def initialize
-    @root = TkRoot.new('height' => 615, 'width' => 205, 
-             'background' => 'lightblue') {title "Tetris"}    
+    @root = TkRoot.new('height' => 615, 'width' => 205,
+                       'background' => 'lightblue') {title "Tetris"}
   end
 
   def bind(char, callback)
@@ -72,7 +72,7 @@ end
 
 class TetrisButton
   def initialize(label, color)
-    @button = TkButton.new do 
+    @button = TkButton.new do
       text label
       background color
       command (proc {yield})
@@ -87,7 +87,7 @@ end
 class TetrisRect
   def initialize(wrapped_canvas, a, b, c, d, color)
     unwrapped_canvas = wrapped_canvas.canvas
-    @rect = TkcRectangle.new(unwrapped_canvas, a, b, c, d, 
+    @rect = TkcRectangle.new(unwrapped_canvas, a, b, c, d,
                              'outline' => 'black', 'fill' => color)
   end
 
