@@ -1,0 +1,62 @@
+Standard ML of New Jersey v110.79 [built: Tue Aug  8 23:21:20 2017]
+- [opening hw7.sml]
+[autoloading]
+[library $SMLNJ-BASIS/basis.cm is stable]
+[library $SMLNJ-BASIS/(basis.cm):basis-common.cm is stable]
+[autoloading done]
+datatype geom_exp
+  = Intersect of geom_exp * geom_exp
+  | Let of string * geom_exp * geom_exp
+  | Line of real * real
+  | LineSegment of real * real * real * real
+  | NoPoints
+  | Point of real * real
+  | Shift of real * real * geom_exp
+  | Var of string
+  | VerticalLine of real
+exception BadProgram of string
+exception Impossible of string
+val epsilon = 1E~05 : real
+val real_close = fn : real * real -> bool
+val real_close_point = fn : real * real -> real * real -> bool
+val two_points_to_line = fn : real * real * real * real -> geom_exp
+val intersect = fn : geom_exp * geom_exp -> geom_exp
+val eval_prog = fn : geom_exp * (string * geom_exp) list -> geom_exp
+val preprocess_prog = fn : geom_exp -> geom_exp
+val it = () : unit
+[autoloading]
+[autoloading done]
+val real_equal = fn : real * real -> bool
+datatype Test = ttest of (unit -> bool) * string
+val test1 = ttest (fn,"preprocess converts a LineSegment to a Point\n") : Test
+val test2 = ttest (fn,"flip an improper LineSegment") : Test
+val test3 = ttest (fn,"flip improper line segment 2") : Test
+val test4 = ttest (fn,"preprocess flips an improper LineSegment") : Test
+val test5 = ttest (fn,"preprocess flips an improper LineSegment 2") : Test
+val test6 = ttest (fn,"eval_prog with NoPoints") : Test
+val test7 = ttest (fn,"eval_prog with empty enviroment") : Test
+val test8 = ttest (fn,"eval_prog with 'a' in environment") : Test
+val test9 = ttest (fn,"eval_prog with Line") : Test
+val test10 = ttest (fn,"eval_prog with LineSegment") : Test
+val test11 = ttest (fn,"eval_prog with shadowing 'a' in environment") : Test
+val test12 = ttest (fn,"eval_prog with non-ops in environment") : Test
+val tests =
+  [ttest (fn,"preprocess converts a LineSegment to a Point\n"),
+   ttest (fn,"flip an improper LineSegment"),
+   ttest (fn,"flip improper line segment 2"),
+   ttest (fn,"preprocess flips an improper LineSegment"),
+   ttest (fn,"preprocess flips an improper LineSegment 2"),
+   ttest (fn,"eval_prog with NoPoints"),
+   ttest (fn,"eval_prog with empty enviroment"),
+   ttest (fn,"eval_prog with 'a' in environment"),
+   ttest (fn,"eval_prog with Line"),ttest (fn,"eval_prog with LineSegment"),
+   ttest (fn,"eval_prog with shadowing 'a' in environment"),
+   ttest (fn,"eval_prog with non-ops in environment")] : Test list
+val do_test = fn : Test -> bool
+
+Starting tests...
+
+
+Tests completed.
+
+- 
