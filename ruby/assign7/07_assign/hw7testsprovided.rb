@@ -46,16 +46,16 @@ def test_point
     puts "#{__LINE__}: Point shift not working properly"
     return false
   end
-  a2 = a.intersect(Point.new(THREE,FIVE))
-  if not (a2.x == THREE and a2.y == FIVE)
-    puts "#{__LINE__}: Point intersect not working properly"
-    return false
-  end
-  a3 = a.intersect(Point.new(FOUR,FIVE))
-  if not (a3.is_a? NoPoints)
-    puts "#{__LINE__}: Point intersect not working properly"
-    return false
-  end
+  # a2 = a.intersect(Point.new(THREE,FIVE))
+  # if not (a2.x == THREE and a2.y == FIVE)
+  #   puts "#{__LINE__}: Point intersect not working properly"
+  #   return false
+  # end
+  # a3 = a.intersect(Point.new(FOUR,FIVE))
+  # if not (a3.is_a? NoPoints)
+  #   puts "#{__LINE__}: Point intersect not working properly"
+  #   return false
+  # end
   true
 end
 
@@ -81,16 +81,16 @@ def line_tests
     return false
   end
 
-  b2 = b.intersect(Line.new(THREE,FIVE))
-  if not (((b2.is_a? Line)) and b2.m == THREE and b2.b == FIVE)
-    puts "#{__LINE__}: Line intersect not working properly"
-    return false
-  end
-  b3 = b.intersect(Line.new(THREE,FOUR))
-  if not ((b3.is_a? NoPoints))
-    puts "#{__LINE__}: Line intersect not working properly"
-    return false
-  end
+  # b2 = b.intersect(Line.new(THREE,FIVE))
+  # if not (((b2.is_a? Line)) and b2.m == THREE and b2.b == FIVE)
+  #   puts "#{__LINE__}: Line intersect not working properly"
+  #   return false
+  # end
+  # b3 = b.intersect(Line.new(THREE,FOUR))
+  # if not ((b3.is_a? NoPoints))
+  #   puts "#{__LINE__}: Line intersect not working properly"
+  #   return false
+  # end
   true
 end
 
@@ -115,16 +115,16 @@ def vertical_line_test
     puts "#{__LINE__}: VerticalLine shift not working properly"
     return false
   end
-  c2 = c.intersect(VerticalLine.new(THREE))
-  if not ((c2.is_a? VerticalLine) and c2.x == THREE )
-    puts "#{__LINE__}: VerticalLine intersect not working properly"
-    return false
-  end
-  c3 = c.intersect(VerticalLine.new(FOUR))
-  if not ((c3.is_a? NoPoints))
-    puts "#{__LINE__}: VerticalLine intersect not working properly"
-    return false
-  end
+  # c2 = c.intersect(VerticalLine.new(THREE))
+  # if not ((c2.is_a? VerticalLine) and c2.x == THREE )
+  #   puts "#{__LINE__}: VerticalLine intersect not working properly"
+  #   return false
+  # end
+  # c3 = c.intersect(VerticalLine.new(FOUR))
+  # if not ((c3.is_a? NoPoints))
+  #   puts "#{__LINE__}: VerticalLine intersect not working properly"
+  #   return false
+  # end
   true
 end
 
@@ -156,31 +156,31 @@ def line_segment_test
     return false
   end
 
-  d4 = d.intersect(LineSegment.new(-THREE,-FOUR,ONE,TWO))
-  if not (((d4.is_a? LineSegment)) and d4.x1 == -THREE and d4.y1 == -FOUR and d4.x2 == ONE and d4.y2 == TWO)
-    puts "#{__LINE__}: LineSegment intersect not working properly #{d4.inspect}"
-    return false
-  end
+  # d4 = d.intersect(LineSegment.new(-THREE,-FOUR,ONE,TWO))
+  # if not (((d4.is_a? LineSegment)) and d4.x1 == -THREE and d4.y1 == -FOUR and d4.x2 == ONE and d4.y2 == TWO)
+  #   puts "#{__LINE__}: LineSegment intersect not working properly #{d4.inspect}"
+  #   return false
+  # end
 
-  d5 = d.intersect(LineSegment.new(TWO,THREE,FOUR,FIVE))
-  if not ((d5.is_a? NoPoints))
-    puts "#{__LINE__}: LineSegment intersect not working properly"
-    return false
-  end
+  # d5 = d.intersect(LineSegment.new(TWO,THREE,FOUR,FIVE))
+  # if not ((d5.is_a? NoPoints))
+  #   puts "#{__LINE__}: LineSegment intersect not working properly"
+  #   return false
+  # end
   true
 end
 
 
-def intersect_tests
-  #Intersect Tests
-  i = Intersect.new(LineSegment.new(-ONE,-TWO,THREE,FOUR), LineSegment.new(THREE,FOUR,-ONE,-TWO))
-  i1 = i.preprocess_prog.eval_prog([])
-  if not (i1.x1 == -ONE and i1.y1 == -TWO and i1.x2 == THREE and i1.y2 == FOUR)
-    puts "#{__LINE__}: Intersect eval_prog should return the intersect between e1 and e2"
-    return false
-  end
-  true
-end
+# def intersect_tests
+#   #Intersect Tests
+#   i = Intersect.new(LineSegment.new(-ONE,-TWO,THREE,FOUR), LineSegment.new(THREE,FOUR,-ONE,-TWO))
+#   i1 = i.preprocess_prog.eval_prog([])
+#   if not (i1.x1 == -ONE and i1.y1 == -TWO and i1.x2 == THREE and i1.y2 == FOUR)
+#     puts "#{__LINE__}: Intersect eval_prog should return the intersect between e1 and e2"
+#     return false
+#   end
+#   true
+# end
 
 def var_tests
   #Var Tests
@@ -197,27 +197,27 @@ def var_tests
   true
 end
 
-def let_tests
-  #Let Tests
-  l = Let.new("a", LineSegment.new(-ONE,-TWO,THREE,FOUR),
-              Intersect.new(Var.new("a"),LineSegment.new(THREE,FOUR,-ONE,-TWO)))
-  l1 = l.preprocess_prog.eval_prog([])
-  if not (l1.x1 == -ONE and l1.y1 == -TWO and l1.x2 == THREE and l1.y2 == FOUR)
-    puts "#{__LINE__}: Let eval_prog should evaluate e2 after adding [s, e1] to the environment"
-    return false
-  end
+# def let_tests
+#   #Let Tests
+#   l = Let.new("a", LineSegment.new(-ONE,-TWO,THREE,FOUR),
+#               Intersect.new(Var.new("a"),LineSegment.new(THREE,FOUR,-ONE,-TWO)))
+#   l1 = l.preprocess_prog.eval_prog([])
+#   if not (l1.x1 == -ONE and l1.y1 == -TWO and l1.x2 == THREE and l1.y2 == FOUR)
+#     puts "#{__LINE__}: Let eval_prog should evaluate e2 after adding [s, e1] to the environment"
+#     return false
+#   end
 
-  #Let Variable Shadowing Test
-  l2 = Let.new("a", LineSegment.new(-ONE, -TWO, THREE, FOUR),
-               Let.new("b", LineSegment.new(THREE,FOUR,-ONE,-TWO), 
-                       Intersect.new(Var.new("a"),Var.new("b"))))
-  l2 = l2.preprocess_prog.eval_prog([["a",Point.new(0,0)]])
-  if not (l2.x1 == -ONE and l2.y1 == -TWO and l2.x2 == THREE and l2.y2 == FOUR)
-    puts "#{__LINE__}: Let eval_prog should evaluate e2 after adding [s, e1] to the environment"
-    return false
-  end
-  true
-end
+#   #Let Variable Shadowing Test
+#   l2 = Let.new("a", LineSegment.new(-ONE, -TWO, THREE, FOUR),
+#                Let.new("b", LineSegment.new(THREE,FOUR,-ONE,-TWO), 
+#                        Intersect.new(Var.new("a"),Var.new("b"))))
+#   l2 = l2.preprocess_prog.eval_prog([["a",Point.new(0,0)]])
+#   if not (l2.x1 == -ONE and l2.y1 == -TWO and l2.x2 == THREE and l2.y2 == FOUR)
+#     puts "#{__LINE__}: Let eval_prog should evaluate e2 after adding [s, e1] to the environment"
+#     return false
+#   end
+#   true
+# end
 
 def shift_tests
   #Shift Tests
@@ -236,8 +236,8 @@ tests = [method(:test_point),
          method(:line_tests),
          method(:vertical_line_test),
          method(:line_segment_test),
-         method(:intersect_tests),
-         method(:let_tests),
+        #  method(:intersect_tests),
+        #  method(:let_tests),
          method(:shift_tests)]
 
 # then call them
@@ -428,6 +428,7 @@ tests[107] = Intersect.new(VerticalLine.new(4.1), LineSegment.new(ONE, ONE, FOUR
 tests[108] = Intersect.new(VerticalLine.new(TWO), LineSegment.new(ONE, ONE, FOUR, FOUR)).eval_prog([]) == Point.new(TWO, TWO)
 
 # LineSegment
+puts ">#{Intersect.new(LineSegment.new(ZERO, ZERO, ZERO, FOUR), LineSegment.new(ONE, ZERO, ONE, FOUR)).preprocess_prog.eval_prog([]).inspect}"
 tests[70] = equal(Intersect.new(LineSegment.new(ZERO, ZERO, ZERO, FOUR), LineSegment.new(ONE, ZERO, ONE, FOUR)).preprocess_prog.eval_prog([]), NoPoints.new)
 tests[71] = equal(Intersect.new(LineSegment.new(ZERO, ZERO, FOUR, ZERO), LineSegment.new(ZERO, ONE, FOUR, ONE)).preprocess_prog.eval_prog([]), NoPoints.new)
 tests[72] = equal(Intersect.new(LineSegment.new(TWO, ZERO, TWO, FOUR), LineSegment.new(ZERO, TWO, FOUR, TWO)).preprocess_prog.eval_prog([]), Point.new(TWO, TWO))
@@ -470,8 +471,7 @@ tests[132] = Intersect.new(LineSegment.new(ONE, ONE, ONE, FOUR), LineSegment.new
 tests[133] = Intersect.new(LineSegment.new(ONE, ONE, ONE, FOUR), LineSegment.new(ONE, -FOUR, ONE, ONE)).eval_prog([]) == Point.new(ONE, ONE)
 tests[134] = Intersect.new(LineSegment.new(ONE, TWO, ONE, THREE), LineSegment.new(ONE, ONE, ONE, FIVE)).eval_prog([]) == LineSegment.new(ONE, TWO, ONE, THREE)
 
-#
 
-tests.each_with_index {|v,i| if (not v.nil?) and (not v) then  puts "Test #{i}: #{v}" end }  
+tests.each_with_index {|v,i| puts "Test #{i}: #{v}"}#|v,i| if (not v.nil?) and (not v) then puts "Test #{i}: #{v}" end }  
 
 puts("Tests completed.")
