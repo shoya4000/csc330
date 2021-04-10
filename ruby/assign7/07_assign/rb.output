@@ -1,26 +1,4 @@
-intersectWithSegmentAsLineResult in LineSegment (the long one)
->#<LineSegment:0x000055e901e116e0 @x1=1.0, @y1=0.0, @x2=1.0, @y2=4.0>
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
-intersectWithSegmentAsLineResult in LineSegment (the long one)
+>#<LineSegment:0x000055c583424700 @x1=1.0, @y1=0.0, @x2=0.0, @y2=4.0>
 Test 0: true
 Test 1: true
 Test 2: true
@@ -95,9 +73,9 @@ Test 70: false
 Test 71: false
 Test 72: false
 Test 73: true
-Test 74: false
+Test 74: true
 Test 75: true
-Test 76: false
+Test 76: true
 Test 77: 
 Test 78: 
 Test 79: 
@@ -144,16 +122,16 @@ Test 119: false
 Test 120: true
 Test 121: false
 Test 122: true
-Test 123: false
-Test 124: false
-Test 125: false
-Test 126: false
-Test 127: false
-Test 128: false
+Test 123: true
+Test 124: true
+Test 125: true
+Test 126: true
+Test 127: true
+Test 128: true
 Test 129: true
-Test 130: false
-Test 131: false
-Test 132: false
-Test 133: false
-Test 134: false
+Test 130: true
+Test 131: true
+Test 132: true
+Test 133: true
+Test 134: true
 Tests completed.
