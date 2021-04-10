@@ -1,0 +1,11 @@
+For my challenge enhancement, I made mine 2 player co-operative (or one multi-tasking player).
+One uses WASD, the other up, down, left, right.
+
+The board now generates 2 pieces, one to the left, and one to the right of the board.
+They cannot cross the middle.
+Drop button drops both pieces.
+New pieces generate together (at same time).
+
+I implemented this by writing new functions for moving and placing the second piece, and mapped those to the arrow keys.
+I also added a parameter to piece, which keeps track of which is to the left, and which to the right, and checks for the middle boundary.
+I adjusted some functions to process both pieces at once, such as "run" and "drop_all_the_way" which drops both pieces simultaneously.
